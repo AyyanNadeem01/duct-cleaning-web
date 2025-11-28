@@ -4,7 +4,7 @@ import { Shield } from 'lucide-react';
 
 export default function Privacy() {
   return (
-    <div className="w-full">
+    <div className="w-full bg-white">
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16 px-4">
         <div className="container mx-auto max-w-6xl">
@@ -24,7 +24,7 @@ export default function Privacy() {
           <div className="bg-white rounded-lg shadow-lg p-8 space-y-8">
             {/* Introduction */}
             <div>
-              <h2 className="text-3xl font-bold mb-4">Privacy Policy</h2>
+              <h2 className="text-3xl text-black font-bold mb-4">Privacy Policy</h2>
               <p className="text-gray-700 leading-relaxed mb-4">
                 ProDuct Clean ("we," "us," "our," or "Company") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and use our services.
               </p>
