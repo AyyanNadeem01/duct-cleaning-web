@@ -1,4 +1,9 @@
-'use client';
+
+export const metadata = {
+  title: "ProDuct Clean - Professional Duct Cleaning Services",
+  description: "Professional AC duct cleaning, dryer vent cleaning, and chimney cleaning services for residential and commercial properties.",
+};
+
 
 import Link from 'next/link';
 import { Check, Wind, Zap, Shield, Users, Star, ArrowRight } from 'lucide-react';
@@ -7,7 +12,7 @@ export default function Home() {
   return (
     <div className="w-full">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-blue-600 via-blue-700 to-slate-900 text-white py-24 px-4 relative overflow-hidden">
+      <section className="bg-gradient-to-br from-blue-600 via-blue-700 to-slate-900 text-white py-32 md:py-48 px-4 relative overflow-hidden min-h-screen flex items-center">
         {/* Decorative elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse-slow"></div>
@@ -38,7 +43,7 @@ export default function Home() {
                 </Link>
               </div>
             </div>
-            <div className="bg-white/95 text-slate-900 rounded-2xl p-8 backdrop-blur-md border border-slate-200 shadow-xl animate-scaleIn transform hover:shadow-2xl hover:bg-white/97 transition-all duration-300 dark:bg-slate-900/80 dark:text-white">
+            <div className="bg-white/95 text-slate-900 rounded-2xl p-8 backdrop-blur-md border border-slate-200 shadow-xl animate-scaleIn transform hover:shadow-2xl hover:bg-blue-600 transition-all duration-300 dark:bg-slate-900/80 dark:text-white">
               <div className="space-y-5">
                 {[
                   { icon: '✓', text: '24/7 Emergency Services' },

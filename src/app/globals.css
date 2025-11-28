@@ -139,6 +139,14 @@ h1, h2, h3, h4, h5, h6 {
   animation: pulse-slow 3s ease-in-out infinite;
 }
 
+@keyframes spin-slow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spin-slow 1.2s linear infinite;
+}
+
 /* Text reveal animation (shimmer/gradient reveal) */
 @keyframes textReveal {
   0% {
