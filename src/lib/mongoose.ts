@@ -10,12 +10,21 @@ if (!MONGODB_URI) {
 /**
  * Use a global cache to reuse mongoose connection in serverless / hot-reload environments
  */
-let cached: { conn: typeof mongoose | null; promise: Promise<typeof mongoose> | null } = (global as any)._mongoose || { conn: null, promise: null };
+interface CachedConnection {
+  conn: typeof mongoose | null;
+  promise: Promise<typeof mongoose> | null;
+}
+
+declare global {
+  var _mongoose: CachedConnection | undefined;
+}
+
+let cached: CachedConnection = global._mongoose || { conn: null, promise: null };
 
 if (!cached.promise) {
   const opts = {
     // useUnifiedTopology and useNewUrlParser not required in mongoose 6+, kept for clarity
-  } as any;
+  };
   cached.promise = mongoose.connect(MONGODB_URI || '', opts).then((m) => m);
 }
 
@@ -23,7 +32,7 @@ export async function connect() {
   if (cached.conn) return cached.conn;
   if (!cached.promise) throw new Error('MONGODB_URI is not configured');
   cached.conn = await cached.promise;
-  (global as any)._mongoose = cached;
+  global._mongoose = cached;
   return cached.conn;
 }
 

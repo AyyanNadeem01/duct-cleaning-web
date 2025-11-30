@@ -29,7 +29,7 @@ export default function CoveragePage() {
       const res = await fetch('/api/coverage');
       const data = await res.json();
       setAreas(data.data || []);
-    } catch (err) {
+    } catch {
       setError('Failed to load coverage areas');
     } finally {
       setLoading(false);

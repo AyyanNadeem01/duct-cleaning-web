@@ -33,7 +33,7 @@ export default function ServicesPage() {
       const res = await fetch('/api/services');
       const data = await res.json();
       setServices(data.data || []);
-    } catch (err) {
+    } catch {
       setError('Failed to load services');
     } finally {
       setLoading(false);
@@ -72,7 +72,13 @@ export default function ServicesPage() {
   };
 
   const handleEdit = (service: Service) => {
-    setForm(service);
+    setForm({
+      name: service.name,
+      slug: service.slug,
+      summary: service.summary,
+      content: service.content,
+      price: service.price || '',
+    });
     setEditingId(service._id);
     setShowForm(true);
   };

@@ -5,7 +5,7 @@
 export async function apiCall<T>(
   endpoint: string,
   method: string = 'GET',
-  body?: any,
+  body?: Record<string, unknown>,
   token?: string
 ): Promise<T> {
   const headers: HeadersInit = { 'Content-Type': 'application/json' };
@@ -35,12 +35,12 @@ export async function getOne<T>(endpoint: string, token?: string): Promise<T> {
   return data.data;
 }
 
-export async function createItem<T>(endpoint: string, body: any, token: string): Promise<T> {
+export async function createItem<T>(endpoint: string, body: Record<string, unknown>, token: string): Promise<T> {
   const data = await apiCall<{ data: T }>(endpoint, 'POST', body, token);
   return data.data;
 }
 
-export async function updateItem<T>(endpoint: string, body: any, token: string): Promise<T> {
+export async function updateItem<T>(endpoint: string, body: Record<string, unknown>, token: string): Promise<T> {
   const data = await apiCall<{ data: T }>(endpoint, 'PUT', body, token);
   return data.data;
 }

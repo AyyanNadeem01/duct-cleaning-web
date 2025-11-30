@@ -33,7 +33,7 @@ export default function CareersPage() {
       const res = await fetch('/api/careers');
       const data = await res.json();
       setCareers(data.data || []);
-    } catch (err) {
+    } catch {
       setError('Failed to load careers');
     } finally {
       setLoading(false);

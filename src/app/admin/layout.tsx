@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { Menu, X, LogOut } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, loading, logout, token } = useAuth();
+  const { isAuthenticated, loading, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -28,6 +28,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const navItems = [
     { label: 'Dashboard', href: '/admin', icon: '📊' },
+    { label: 'Company Info', href: '/admin/company', icon: '🏢' },
     { label: 'Services', href: '/admin/services', icon: '🔧' },
     { label: 'Promotions', href: '/admin/promotions', icon: '🎯' },
     { label: 'Coverage', href: '/admin/coverage', icon: '📍' },

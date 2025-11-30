@@ -3,15 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
 
-interface About {
-  _id?: string;
-  title: string;
-  body: string;
-}
-
 export default function AboutPage() {
   const { token } = useAuth();
-  const [about, setAbout] = useState<About | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [form, setForm] = useState({ title: '', body: '' });
@@ -22,9 +15,8 @@ export default function AboutPage() {
       const res = await fetch('/api/about');
       const data = await res.json();
       const item = data.data || { title: '', body: '' };
-      setAbout(item as About);
       setForm({ title: item.title || '', body: item.body || '' });
-    } catch (err) {
+    } catch {
       setError('Failed to load about info');
     } finally {
       setLoading(false);

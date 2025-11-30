@@ -33,7 +33,7 @@ export default function PromotionsPage() {
       const res = await fetch('/api/promotions');
       const data = await res.json();
       setPromotions(data.data || []);
-    } catch (err) {
+    } catch {
       setError('Failed to load promotions');
     } finally {
       setLoading(false);

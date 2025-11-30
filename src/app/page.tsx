@@ -12,12 +12,9 @@ export default function Home() {
   return (
     <div className="w-full">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-blue-600 via-blue-700 to-slate-900 text-white py-32 md:py-48 px-4 relative overflow-hidden min-h-screen flex items-center">
-        {/* Decorative elements */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse-slow"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse-slow animation-delay-4000"></div>
-        </div>
+      <section className="text-white py-32 md:py-48 px-4 relative overflow-hidden min-h-screen flex items-center bg-cover bg-center bg-no-repeat" style={{backgroundImage: "url('/acductlanding.jpg')"}}>
+        {/* Dark overlay for better text visibility */}
+        <div className="absolute inset-0 bg-black/50"></div>
 
         <div className="container mx-auto max-w-6xl relative z-10">
           <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -163,7 +160,7 @@ export default function Home() {
       </section>
 
       {/* Why Choose Us */}
-      <section className="py-24 px-4 bg-gradient-to-br from-white via-blue-50 to-white">
+      <section className="py-24 px-4 bg-linear-to-br from-white via-blue-50 to-white">
         <div className="container mx-auto max-w-6xl">
           <h2 className="text-5xl font-bold text-center mb-16 animate-fadeInDown heading-reveal text-gray-900">Why Choose ProDuct Clean?</h2>
 
@@ -194,7 +191,7 @@ export default function Home() {
       </section>
 
       {/* Special Promotions */}
-      <section className="py-24 px-4 bg-gradient-to-br from-blue-50 to-blue-100">
+      <section className="py-24 px-4 bg-linear-to-br from-blue-50 to-blue-100">
         <div className="container mx-auto max-w-6xl">
           <h2 className="text-5xl font-bold text-center mb-16 animate-fadeInDown text-gray-900">Special Offers</h2>
 
