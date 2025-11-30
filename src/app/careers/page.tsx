@@ -1,105 +1,45 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Briefcase, MapPin, DollarSign, Heart } from 'lucide-react';
 
+interface Career {
+  _id: string;
+  title: string;
+  description: string;
+  location: string;
+  jobType: string;
+  salary?: string;
+  requirements?: string[];
+}
+
 export default function Careers() {
-  const jobListings = [
-    {
-      id: 1,
-      title: 'HVAC Duct Cleaning Technician',
-      type: 'Full-Time',
-      location: 'Metro Area',
-      salary: '$45,000 - $65,000/year',
-      description: 'Experienced technician needed for residential and commercial duct cleaning services.',
-      requirements: [
-        '2+ years of HVAC experience',
-        'Valid driver\'s license',
-        'Physical ability to work at heights',
-        'Customer service skills',
-        'Technical aptitude'
-      ]
-    },
-    {
-      id: 2,
-      title: 'Dryer Vent Specialist',
-      type: 'Full-Time',
-      location: 'Metro Area',
-      salary: '$40,000 - $55,000/year',
-      description: 'Help homeowners prevent dryer fires with professional vent cleaning services.',
-      requirements: [
-        '1+ year of relevant experience',
-        'Knowledge of dryer systems',
-        'Physical fitness',
-        'Safety consciousness',
-        'Problem-solving skills'
-      ]
-    },
-    {
-      id: 3,
-      title: 'Chimney Sweep',
-      type: 'Full-Time',
-      location: 'Various',
-      salary: '$42,000 - $60,000/year',
-      description: 'Professional chimney cleaning and maintenance specialist for residential properties.',
-      requirements: [
-        'Chimney cleaning certification preferred',
-        '1+ year of chimney experience',
-        'Fear of heights management ability',
-        'Detail-oriented',
-        'Safety certified'
-      ]
-    },
-    {
-      id: 4,
-      title: 'Customer Service Representative',
-      type: 'Full-Time',
-      location: 'Office',
-      salary: '$35,000 - $45,000/year',
-      description: 'Handle customer inquiries, scheduling, and support via phone and email.',
-      requirements: [
-        'Excellent communication skills',
-        'Phone etiquette',
-        'Computer proficiency',
-        '1+ year of customer service',
-        'Problem-solving ability'
-      ]
-    },
-    {
-      id: 5,
-      title: 'Scheduler/Dispatcher',
-      type: 'Full-Time',
-      location: 'Office',
-      salary: '$38,000 - $50,000/year',
-      description: 'Coordinate technician schedules and ensure optimal service delivery.',
-      requirements: [
-        'Organizational skills',
-        'Computer skills',
-        'Communication abilities',
-        'Attention to detail',
-        'Multitasking capability'
-      ]
-    },
-    {
-      id: 6,
-      title: 'Sales Representative',
-      type: 'Full-Time/Commission',
-      location: 'Field-Based',
-      salary: '$35,000 - $75,000+/year',
-      description: 'Generate new business and manage customer relationships for service contracts.',
-      requirements: [
-        '2+ years of sales experience',
-        'Networking skills',
-        'Product knowledge eagerness',
-        'Driving ability',
-        'Target-oriented mindset'
-      ]
-    }
-  ];
+  const [careers, setCareers] = useState<Career[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchCareers = async () => {
+      try {
+        const res = await fetch('/api/careers');
+        if (!res.ok) throw new Error('Failed to fetch careers');
+        const data = await res.json();
+        setCareers(data.data || []);
+      } catch (err) {
+        console.error('Failed to fetch careers:', err);
+        setError('Unable to load job listings');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCareers();
+  }, []);
 
   return (
     <div className="w-full">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16 px-4">
+      <section className="bg-linear-to-r from-blue-600 to-blue-800 text-white py-16 px-4">
         <div className="container mx-auto max-w-6xl">
           <h1 className="text-5xl font-bold mb-4 heading-reveal">Join Our Team</h1>
           <p className="text-xl text-blue-100">
@@ -184,52 +124,79 @@ export default function Careers() {
       <section className="py-16 px-4 bg-gray-50">
         <div className="container mx-auto max-w-6xl">
           <h2 className="text-4xl font-bold text-black text-center mb-4">Current Openings</h2>
-          <p className="text-center text-gray-600 text-lg mb-12">
-            {jobListings.length} positions available
-          </p>
 
-          <div className="space-y-6">
-            {jobListings.map((job) => (
-              <div key={job.id} className="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition">
-                <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-4 gap-4">
-                  <div>
-                    <h3 className="text-2xl font-bold text-gray-800 mb-2">{job.title}</h3>
-                    <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                      <span className="flex items-center gap-1 bg-blue-100 px-3 py-1 rounded-full">
-                        <Briefcase size={14} />
-                        {job.type}
-                      </span>
-                      <span className="flex items-center gap-1 bg-green-100 px-3 py-1 rounded-full">
-                        <MapPin size={14} />
-                        {job.location}
-                      </span>
-                      <span className="flex items-center gap-1 bg-orange-100 px-3 py-1 rounded-full">
-                        <DollarSign size={14} />
-                        {job.salary}
-                      </span>
+          {loading && (
+            <div className="text-center py-12">
+              <p className="text-gray-600">Loading job listings...</p>
+            </div>
+          )}
+
+          {error && (
+            <div className="text-center py-12">
+              <p className="text-red-600">{error}</p>
+            </div>
+          )}
+
+          {!loading && careers.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-gray-600">No job openings available at this time.</p>
+            </div>
+          )}
+
+          {!loading && careers.length > 0 && (
+            <>
+              <p className="text-center text-gray-600 text-lg mb-12">
+                {careers.length} position{careers.length !== 1 ? 's' : ''} available
+              </p>
+
+              <div className="space-y-6">
+                {careers.map((job) => (
+                  <div key={job._id} className="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition">
+                    <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-4 gap-4">
+                      <div>
+                        <h3 className="text-2xl font-bold text-gray-800 mb-2">{job.title}</h3>
+                        <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                          <span className="flex items-center gap-1 bg-blue-100 px-3 py-1 rounded-full">
+                            <Briefcase size={14} />
+                            {job.jobType}
+                          </span>
+                          <span className="flex items-center gap-1 bg-green-100 px-3 py-1 rounded-full">
+                            <MapPin size={14} />
+                            {job.location}
+                          </span>
+                          {job.salary && (
+                            <span className="flex items-center gap-1 bg-orange-100 px-3 py-1 rounded-full">
+                              <DollarSign size={14} />
+                              {job.salary}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <button className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition whitespace-nowrap">
+                        Apply Now
+                      </button>
                     </div>
+
+                    <p className="text-gray-700 mb-6">{job.description}</p>
+
+                    {job.requirements && job.requirements.length > 0 && (
+                      <div>
+                        <h4 className="font-bold text-gray-800 mb-3">Key Requirements:</h4>
+                        <ul className="space-y-2">
+                          {job.requirements.map((req, i) => (
+                            <li key={i} className="flex items-start gap-2 text-gray-700">
+                              <span className="text-blue-600 font-bold shrink-0">✓</span>
+                              <span>{req}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </div>
-                  <button className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition whitespace-nowrap">
-                    Apply Now
-                  </button>
-                </div>
-
-                <p className="text-gray-700 mb-6">{job.description}</p>
-
-                <div>
-                  <h4 className="font-bold text-gray-800 mb-3">Key Requirements:</h4>
-                  <ul className="space-y-2">
-                    {job.requirements.map((req, i) => (
-                      <li key={i} className="flex items-start gap-2 text-gray-700">
-                        <span className="text-blue-600 font-bold flex-shrink-0">✓</span>
-                        <span>{req}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </>
+          )}
         </div>
       </section>
 
@@ -280,13 +247,13 @@ export default function Careers() {
       </section>
 
       {/* Internship Program */}
-      <section className="py-16 px-4 bg-gradient-to-r from-blue-50 to-blue-100">
+      <section className="py-16 px-4 bg-linear-to-r from-blue-50 to-blue-100">
         <div className="container mx-auto max-w-6xl">
           <h2 className="text-4xl text-black font-bold text-center mb-12">Internship Program</h2>
 
           <div className="bg-white rounded-lg shadow-lg p-12">
             <p className="text-gray-700 text-lg mb-6 leading-relaxed">
-              We're proud to offer an internship program for students interested in learning about the duct cleaning and maintenance industry. Interns gain valuable hands-on experience while working alongside our experienced professionals.
+              We&apos;re proud to offer an internship program for students interested in learning about the duct cleaning and maintenance industry. Interns gain valuable hands-on experience while working alongside our experienced professionals.
             </p>
 
             <div className="grid md:grid-cols-2 gap-8 mb-8">
@@ -328,7 +295,7 @@ export default function Careers() {
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
-                    Valid driver's license
+                    Valid driver&apos;s license
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
@@ -358,7 +325,7 @@ export default function Careers() {
       </section>
 
       {/* Ready to Join */}
-      <section className="py-16 px-4 bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+      <section className="py-16 px-4 bg-linear-to-r from-blue-600 to-blue-800 text-white">
         <div className="container mx-auto max-w-3xl text-center">
           <h2 className="text-4xl font-bold mb-6">Ready to Build Your Career?</h2>
           <p className="text-xl text-blue-100 mb-8">

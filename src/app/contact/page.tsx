@@ -1,19 +1,21 @@
 'use client';
 
 import { useState } from 'react';
-import { Phone, Mail, MapPin, Clock, Send } from 'lucide-react';
+import { Phone, Mail, MapPin, Send, Clock } from 'lucide-react';
 
 export default function Contact() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
-    service: '',
-    message: '',
-    zipCode: ''
+    message: ''
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -21,25 +23,34 @@ export default function Contact() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Handle form submission
-    console.log(formData);
-    alert('Thank you for your message! We will contact you shortly.');
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      service: '',
-      message: '',
-      zipCode: ''
-    });
+    setError('');
+    setLoading(true);
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) throw new Error('Failed to submit form');
+      
+      setSuccess(true);
+      setFormData({ name: '', email: '', phone: '', message: '' });
+      setTimeout(() => setSuccess(false), 5000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error submitting form');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="w-full">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16 px-4">
+      <section className="bg-linear-to-r from-blue-600 to-blue-800 text-white py-16 px-4">
         <div className="container mx-auto max-w-6xl">
           <h1 className="text-5xl font-bold mb-4 heading-reveal">Contact Us</h1>
           <p className="text-xl text-blue-100">
@@ -67,6 +78,7 @@ export default function Contact() {
               </p>
             </div>
 
+
             {/* Email */}
             <div className="bg-white rounded-lg shadow-lg p-8 border-t-4 border-green-600 text-center">
               <Mail className="mx-auto text-green-600 mb-4" size={48} />
@@ -77,8 +89,7 @@ export default function Contact() {
                 </a>
               </p>
               <p className="text-gray-600 text-sm">
-                Response within 2 hours during business hours<br />
-                We check email constantly
+                Response within 24 hours
               </p>
             </div>
 
@@ -86,13 +97,9 @@ export default function Contact() {
             <div className="bg-white rounded-lg shadow-lg p-8 border-t-4 border-orange-600 text-center">
               <MapPin className="mx-auto text-orange-600 mb-4" size={48} />
               <h3 className="text-black text-2xl font-bold mb-2">Location</h3>
-              <p className="text-gray-600 mb-4">
-                Serving the Metro Area<br />
-                and surrounding regions
-              </p>
               <p className="text-gray-600 text-sm">
-                Coverage area check available<br />
-                Call for service territory information
+                Serving multiple regions<br />
+                Check coverage areas for details
               </p>
             </div>
           </div>
@@ -107,7 +114,17 @@ export default function Contact() {
             <div className="bg-white rounded-lg shadow-lg p-8">
               <h2 className="text-3xl text-black font-bold mb-6">Send us a Message</h2>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              {success && (
+                <div className="mb-6 p-4 bg-green-100 text-green-700 rounded">
+                  Thank you! Your message has been sent. We&apos;ll contact you shortly.
+                </div>
+              )}
+
+              {error && (
+                <div className="mb-6 p-4 bg-red-100 text-red-700 rounded">
+                  {error}
+                </div>
+              )}              <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                   <label className="block text-gray-700 font-semibold mb-2">Full Name *</label>
                   <input
@@ -148,37 +165,6 @@ export default function Contact() {
                   </div>
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-gray-700 font-semibold mb-2">Zip Code</label>
-                    <input
-                      type="text"
-                      name="zipCode"
-                      value={formData.zipCode}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600 text-black"
-                      placeholder="12345"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-gray-700 font-semibold mb-2">Service Interested *</label>
-                    <select
-                      name="service"
-                      value={formData.service}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600 text-black"
-                    >
-                      <option value="">Select a service</option>
-                      <option value="ac-duct">AC Duct Cleaning</option>
-                      <option value="dryer-vent">Dryer Vent Cleaning</option>
-                      <option value="chimney">Chimney Cleaning</option>
-                      <option value="multiple">Multiple Services</option>
-                      <option value="other">Other / Inquiry</option>
-                    </select>
-                  </div>
-                </div>
-
                 <div>
                   <label className="block text-gray-700 font-semibold mb-2">Message *</label>
                   <textarea
@@ -194,14 +180,15 @@ export default function Contact() {
 
                 <button
                   type="submit"
-                  className="w-full bg-blue-600 text-white py-4 rounded-lg font-bold hover:bg-blue-700 transition flex items-center justify-center gap-2"
+                  disabled={loading}
+                  className="w-full bg-blue-600 text-white py-4 rounded-lg font-bold hover:bg-blue-700 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Send size={20} />
-                  Send Message
+                  {loading ? 'Sending...' : 'Send Message'}
                 </button>
 
                 <p className="text-gray-600 text-sm text-center">
-                  * Required fields. We'll respond within 2 hours during business hours.
+                  * Required fields. We&apos;ll respond within 2 hours during business hours.
                 </p>
               </form>
             </div>
@@ -260,19 +247,19 @@ export default function Contact() {
                 <h3 className="text-2xl font-bold text-orange-600 mb-4">What to Expect</h3>
                 <ol className="space-y-2 text-gray-700">
                   <li className="flex items-start gap-3">
-                    <span className="font-bold text-orange-600 flex-shrink-0">1.</span>
+                    <span className="font-bold text-orange-600 shrink-0">1.</span>
                     <span>Quick response to your inquiry</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <span className="font-bold text-orange-600 flex-shrink-0">2.</span>
+                    <span className="font-bold text-orange-600 shrink-0">2.</span>
                     <span>Free quote with no obligation</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <span className="font-bold text-orange-600 flex-shrink-0">3.</span>
+                    <span className="font-bold text-orange-600 shrink-0">3.</span>
                     <span>Flexible scheduling options</span>
                   </li>
                   <li className="flex items-start gap-3">
-                    <span className="font-bold text-orange-600 flex-shrink-0">4.</span>
+                    <span className="font-bold text-orange-600 shrink-0">4.</span>
                     <span>Professional service delivery</span>
                   </li>
                 </ol>

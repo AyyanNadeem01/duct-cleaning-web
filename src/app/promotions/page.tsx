@@ -1,100 +1,62 @@
 'use client';
 
-import { Gift, TrendingDown, Clock, DollarSign } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Gift } from 'lucide-react';
 import Link from 'next/link';
 
+interface Promotion {
+  _id: string;
+  title: string;
+  description: string;
+  discount: number;
+  startDate: string;
+  endDate: string;
+  active: boolean;
+  details?: string;
+}
+
 export default function Promotions() {
-  const promotions = [
-    {
-      id: 1,
-      title: 'First-Time Customer Special',
-      discount: '15% OFF',
-      description: 'New customers receive 15% off any service',
-      details: [
-        'Valid for first-time customers only',
-        'Applies to any service',
-        'No hidden fees or charges',
-        'Must mention when booking'
-      ],
-      icon: '🎉',
-      color: 'from-green-500 to-green-600'
-    },
-    {
-      id: 2,
-      title: 'Service Bundle Deal',
-      discount: '20% OFF',
-      description: 'Book 2 or more services together',
-      details: [
-        'AC Duct + Dryer Vent: Save $100+',
-        'All 3 services: Save $200+',
-        'Valid on same visit or separate dates',
-        'Stackable with other promotions'
-      ],
-      icon: '📦',
-      color: 'from-blue-500 to-blue-600'
-    },
-    {
-      id: 3,
-      title: 'Senior & Military Discount',
-      discount: '10% OFF',
-      description: 'Special rates for seniors and military personnel',
-      details: [
-        'Valid for 65+ years old',
-        'Applies to active/retired military',
-        'Available year-round',
-        'Must provide valid ID'
-      ],
-      icon: '🪖',
-      color: 'from-purple-500 to-purple-600'
-    },
-    {
-      id: 4,
-      title: 'Spring Cleaning Special',
-      discount: '17% OFF',
-      description: 'Perfect time to refresh your ducts',
-      details: [
-        'March through May offer',
-        'AC Duct Cleaning special pricing',
-        'Prepare for summer cooling season',
-        'Early booking discount available'
-      ],
-      icon: '🌸',
-      color: 'from-pink-500 to-pink-600'
-    },
-    {
-      id: 5,
-      title: 'Fall Maintenance Package',
-      discount: '18% OFF',
-      description: 'Chimney & heating prep for fall/winter',
-      details: [
-        'September through October offer',
-        'Chimney Cleaning + HVAC combo',
-        'Get ready for heating season',
-        'Emergency prep discount'
-      ],
-      icon: '🍂',
-      color: 'from-orange-500 to-orange-600'
-    },
-    {
-      id: 6,
-      title: 'Referral Reward Program',
-      discount: '$50 CREDIT',
-      description: 'Earn credits for each successful referral',
-      details: [
-        'Refer a friend, get $50 credit',
-        'Friend receives 10% discount',
-        'Unlimited referrals allowed',
-        'Credits never expire'
-      ],
-      icon: '👥',
-      color: 'from-cyan-500 to-cyan-600'
-    }
-  ];
+  const [promotions, setPromotions] = useState<Promotion[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchPromotions = async () => {
+      try {
+        const res = await fetch('/api/promotions');
+        if (!res.ok) throw new Error('Failed to fetch promotions');
+        const data = await res.json();
+        setPromotions(data.data || []);
+      } catch (err) {
+        console.error('Failed to fetch promotions:', err);
+        setError('Unable to load promotions');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPromotions();
+  }, []);
+
+  const isPromotionActive = (startDate: string, endDate: string) => {
+    const now = new Date();
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    return now >= start && now <= end;
+  };
+
+  const formatDate = (date: string) => {
+    return new Date(date).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  };
 
   return (
     <div className="w-full">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16 px-4">
+      <section className="bg-linear-to-r from-blue-600 to-blue-800 text-white py-16 px-4">
         <div className="container mx-auto max-w-6xl">
           <h1 className="text-5xl font-bold mb-4 flex items-center gap-3 heading-reveal">
             <Gift size={48} />
@@ -114,113 +76,92 @@ export default function Promotions() {
             Take advantage of these limited-time offers
           </p>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {promotions.map((promo) => (
-              <div
-                key={promo.id}
-                className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition transform hover:scale-105"
-              >
-                {/* Header with gradient */}
-                <div className={`bg-gradient-to-r ${promo.color} text-white p-6`}>
-                  <div className="text-4xl mb-2">{promo.icon}</div>
-                  <h3 className="text-2xl font-bold mb-1">{promo.title}</h3>
-                  <p className="text-blue-100 text-sm">{promo.description}</p>
-                </div>
+          {loading && (
+            <div className="text-center py-12">
+              <p className="text-gray-600">Loading promotions...</p>
+            </div>
+          )}
 
-                {/* Discount Badge */}
-                <div className="px-6 py-4 bg-gradient-to-r from-yellow-50 to-orange-50 border-b-2 border-dashed border-orange-300">
-                  <div className="text-center">
-                    <span className="text-4xl font-bold text-orange-600">{promo.discount}</span>
+          {error && (
+            <div className="text-center py-12">
+              <p className="text-red-600">{error}</p>
+            </div>
+          )}
+
+          {!loading && promotions.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-gray-600">No promotions available at this time.</p>
+            </div>
+          )}
+
+          {!loading && promotions.length > 0 && (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {promotions.map((promo) => {
+                const isActive = isPromotionActive(promo.startDate, promo.endDate);
+                const colors = [
+                  'from-green-500 to-green-600',
+                  'from-blue-500 to-blue-600',
+                  'from-purple-500 to-purple-600',
+                  'from-pink-500 to-pink-600',
+                  'from-orange-500 to-orange-600',
+                  'from-cyan-500 to-cyan-600'
+                ];
+                const colorIndex = promotions.indexOf(promo) % colors.length;
+                const color = colors[colorIndex];
+
+                return (
+                  <div
+                    key={promo._id}
+                    className={`bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition transform hover:scale-105 ${
+                      !isActive ? 'opacity-60' : ''
+                    }`}
+                  >
+                    {/* Header with gradient */}
+                    <div className={`bg-linear-to-r ${color} text-white p-6`}>
+                      <h3 className="text-2xl font-bold mb-1">{promo.title}</h3>
+                      <p className="text-blue-100 text-sm">{promo.description}</p>
+                    </div>
+
+                    {/* Discount Badge */}
+                    <div className="px-6 py-4 bg-linear-to-r from-yellow-50 to-orange-50 border-b-2 border-dashed border-orange-300">
+                      <div className="text-center">
+                        <span className="text-4xl font-bold text-orange-600">
+                          {promo.discount}% OFF
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Details */}
+                    <div className="p-6">
+                      {promo.details && (
+                        <p className="text-gray-700 text-sm mb-4">{promo.details}</p>
+                      )}
+
+                      <div className="text-xs text-gray-500 mb-4 space-y-1">
+                        <p>
+                          <strong>Valid:</strong> {formatDate(promo.startDate)} - {formatDate(promo.endDate)}
+                        </p>
+                        <p>
+                          <strong>Status:</strong> {isActive ? (
+                            <span className="text-green-600 font-semibold">Active</span>
+                          ) : (
+                            <span className="text-red-600 font-semibold">Expired</span>
+                          )}
+                        </p>
+                      </div>
+
+                      <button
+                        disabled={!isActive}
+                        className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isActive ? 'Claim Offer' : 'Offer Expired'}
+                      </button>
+                    </div>
                   </div>
-                </div>
-
-                {/* Details */}
-                <div className="p-6">
-                  <ul className="space-y-3 mb-6">
-                    {promo.details.map((detail, i) => (
-                      <li key={i} className="flex items-start gap-2 text-gray-700 text-sm">
-                        <span className="text-green-600 font-bold mt-1">✓</span>
-                        <span>{detail}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <button className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition">
-                    Claim Offer
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Combo Deals */}
-      <section className="py-16 px-4 bg-white">
-        <div className="container mx-auto max-w-6xl">
-          <h2 className="text-4xl text-black font-bold text-center mb-12">Best Value Combo Deals</h2>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-8 border-2 border-blue-600">
-              <h3 className="text-3xl font-bold text-blue-600 mb-4">Duo Package</h3>
-              <p className="text-gray-700 mb-6 text-lg">
-                AC Duct Cleaning + Dryer Vent Cleaning
-              </p>
-
-              <div className="space-y-4 mb-8">
-                <div className="flex justify-between items-center pb-2 border-b-2 border-blue-200">
-                  <span className="text-gray-700">Regular Price:</span>
-                  <span className="text-2xl font-bold text-gray-700">$448</span>
-                </div>
-                <div className="flex justify-between items-center pb-2 border-b-2 border-blue-200">
-                  <span className="text-gray-700">Combo Price:</span>
-                  <span className="text-3xl font-bold text-blue-600">$359</span>
-                </div>
-                <div className="flex justify-between items-center bg-green-100 p-3 rounded-lg">
-                  <span className="font-bold text-green-700">You Save:</span>
-                  <span className="text-2xl font-bold text-green-700">$89 (20%)</span>
-                </div>
-              </div>
-
-              <button className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition mb-4">
-                Select Duo Package
-              </button>
-
-              <p className="text-gray-600 text-sm text-center">
-                Limited time offer • Valid for new and existing customers
-              </p>
+                );
+              })}
             </div>
-
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-8 border-2 border-purple-600">
-              <h3 className="text-3xl font-bold text-purple-600 mb-4">Triple Package</h3>
-              <p className="text-gray-700 mb-6 text-lg">
-                AC Duct + Dryer Vent + Chimney Cleaning
-              </p>
-
-              <div className="space-y-4 mb-8">
-                <div className="flex justify-between items-center pb-2 border-b-2 border-purple-200">
-                  <span className="text-gray-700">Regular Price:</span>
-                  <span className="text-2xl font-bold text-gray-700">$647</span>
-                </div>
-                <div className="flex justify-between items-center pb-2 border-b-2 border-purple-200">
-                  <span className="text-gray-700">Combo Price:</span>
-                  <span className="text-3xl font-bold text-purple-600">$485</span>
-                </div>
-                <div className="flex justify-between items-center bg-green-100 p-3 rounded-lg">
-                  <span className="font-bold text-green-700">You Save:</span>
-                  <span className="text-2xl font-bold text-green-700">$162 (25%)</span>
-                </div>
-              </div>
-
-              <button className="w-full bg-purple-600 text-white py-3 rounded-lg font-bold hover:bg-purple-700 transition mb-4">
-                Select Triple Package
-              </button>
-
-              <p className="text-gray-600 text-sm text-center">
-                Best value available • Most popular choice
-              </p>
-            </div>
-          </div>
+          )}
         </div>
       </section>
 
@@ -284,7 +225,7 @@ export default function Promotions() {
       </section>
 
       {/* Newsletter Signup */}
-      <section className="py-16 px-4 bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+      <section className="py-16 px-4 bg-linear-to-r from-blue-600 to-blue-800 text-white">
         <div className="container mx-auto max-w-2xl text-center">
           <h2 className="text-4xl font-bold mb-4">Get Exclusive Offers</h2>
           <p className="text-xl text-blue-100 mb-8">
@@ -317,7 +258,7 @@ export default function Promotions() {
         <div className="container mx-auto max-w-3xl text-center">
           <h2 className="text-4xl font-bold mb-6">Ready to Save?</h2>
           <p className="text-xl text-gray-600 mb-8">
-            Don't miss out on these incredible offers. Contact us today to claim your discount!
+            Don&apos;t miss out on these incredible offers. Contact us today to claim your discount!
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
