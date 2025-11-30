@@ -1,0 +1,30 @@
+{
+  "about": {
+    "title": "ProDuct Clean",
+    "body": "We are ProDuct Clean — professional duct cleaning services. Replace this text with your about info."
+  },
+  "services": [
+    {
+      "name": "Residential Duct Cleaning",
+      "slug": "residential-duct-cleaning",
+      "summary": "Thorough cleaning for homes",
+      "content": "Full description here"
+    },
+    {
+      "name": "Commercial Duct Cleaning",
+      "slug": "commercial-duct-cleaning",
+      "summary": "For businesses and offices",
+      "content": "Full description here"
+    }
+  ],
+  "coverage": [
+    { "areaName": "Downtown" },
+    { "areaName": "Northside" }
+  ],
+  "promotions": [
+    { "title": "Spring Special", "summary": "10% off" }
+  ],
+  "careers": [
+    { "title": "Duct Technician", "location": "Remote/Local", "description": "Job description here" }
+  ]
+}
