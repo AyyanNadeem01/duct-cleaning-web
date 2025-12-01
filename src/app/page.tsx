@@ -7,6 +7,7 @@ export const metadata = {
 
 import Link from 'next/link';
 import { Check, Wind, Zap, Shield, Users, Star, ArrowRight } from 'lucide-react';
+import Typewriter from '@/components/Typewriter';
 
 export default function Home() {
   return (
@@ -20,7 +21,7 @@ export default function Home() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="animate-fadeInUp page-fade">
               <h1 className="text-6xl md:text-7xl font-bold mb-6 leading-tight heading-reveal">
-                Breathe <span className="text-fancy">Cleaner Air</span> Today
+                <Typewriter prefix="Breathe " highlight="Cleaner Air" className="text-6xl md:text-7xl font-bold" />
               </h1>
               <p className="text-xl text-blue-100 mb-8 leading-relaxed">
                 Professional duct cleaning, dryer vent cleaning, and chimney services for your home and business. Experience the difference clean air makes.

@@ -1,12 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
 
   const navLinks = [
     { href: '/', label: 'Home' },
@@ -19,21 +18,11 @@ export default function Header() {
     { href: '/contact', label: 'Contact Us' },
   ];
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 50) setScrolled(true);
-      else setScrolled(false);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   return (
     <header
-      className={`sticky top-0 z-50 bg-gradient-to-r from-slate-800/90 to-slate-800/90 text-white shadow-md shadow-blue-900/10 backdrop-blur-sm transition-all duration-300 ${
-        scrolled ? 'py-2' : 'py-5'
-      }`}
-    >
+        className="sticky top-0 z-50 text-white py-5 bg-slate-600/30 backdrop-blur-sm"
+      >
 <nav className="mx-auto max-w-full px-2 md:px-4 flex justify-between items-center transition-all duration-300">
   {/* Logo */}
   <Link href="/" className="flex items-center gap-2">
@@ -89,7 +78,7 @@ export default function Header() {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden bg-gradient-to-b from-slate-800/85 via-slate-800/85 to-slate-900/90 px-5 py-5 space-y-3 border-t border-slate-700/30 backdrop-blur-sm">
+  <div className="md:hidden bg-slate-600/30 backdrop-blur-sm px-5 py-5 space-y-3 border-t border-white/20">
           {navLinks.map((link) => (
             <Link
               key={link.href}

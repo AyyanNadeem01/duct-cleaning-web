@@ -1,6 +1,7 @@
-'use client';
+"use client";
 
 import { useState } from 'react';
+import { useCompanyData } from '@/lib/use-company';
 import { Phone, Mail, MapPin, Send, Clock } from 'lucide-react';
 
 export default function Contact() {
@@ -14,6 +15,43 @@ export default function Contact() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+
+  const { company } = useCompanyData();
+
+  const companyPhone = (c: any) => {
+    if (!c) return '';
+    // prefer emergencyPhone if provided, otherwise main phone
+    return c.emergencyPhone || c.phone || '';
+  };
+
+  const phoneDisplay = companyPhone(company) || '(555) 123-4567';
+
+  const hoursDisplay = (
+    company?.businessHours ? (
+      company.businessHours?.monday ? (
+        <>
+          <span>Available 24/7 for emergency services</span>
+          <br />
+          <span>
+            Mon-Fri: {company.businessHours.monday.open} - {company.businessHours.friday?.close || company.businessHours.monday.close} |
+            Sat-Sun: {company.businessHours.saturday?.open || '8:00 AM'} - {company.businessHours.sunday?.close || '5:00 PM'}
+          </span>
+        </>
+      ) : (
+        <>
+          Available 24/7 for emergency services
+          <br />
+          Mon-Fri: 7am-8pm | Sat-Sun: 8am-6pm
+        </>
+      )
+    ) : (
+      <>
+        Available 24/7 for emergency services
+        <br />
+        Mon-Fri: 7am-8pm | Sat-Sun: 8am-6pm
+      </>
+    )
+  );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -68,13 +106,12 @@ export default function Contact() {
               <Phone className="mx-auto text-blue-600 mb-4" size={48} />
               <h3 className="text-black text-2xl font-bold mb-2">Phone</h3>
               <p className="text-gray-600 mb-4 text-lg">
-                <a href="tel:(555)123-4567" className="text-blue-600 font-semibold hover:underline">
-                  (555) 123-4567
+                <a href={`tel:${phoneDisplay}`} className="text-blue-600 font-semibold hover:underline">
+                  {phoneDisplay}
                 </a>
               </p>
               <p className="text-gray-600 text-sm">
-                Available 24/7 for emergency services<br />
-                Mon-Fri: 7am-8pm | Sat-Sun: 8am-6pm
+                {hoursDisplay}
               </p>
             </div>
 
@@ -84,8 +121,8 @@ export default function Contact() {
               <Mail className="mx-auto text-green-600 mb-4" size={48} />
               <h3 className="text-black text-2xl font-bold mb-2">Email</h3>
               <p className="text-gray-600 mb-4 text-lg">
-                <a href="mailto:info@productclean.com" className="text-blue-600 font-semibold hover:underline">
-                  info@productclean.com
+                <a href={`mailto:${company?.email || 'info@productclean.com'}`} className="text-blue-600 font-semibold hover:underline">
+                  {company?.email || 'info@productclean.com'}
                 </a>
               </p>
               <p className="text-gray-600 text-sm">
@@ -98,8 +135,11 @@ export default function Contact() {
               <MapPin className="mx-auto text-orange-600 mb-4" size={48} />
               <h3 className="text-black text-2xl font-bold mb-2">Location</h3>
               <p className="text-gray-600 text-sm">
-                Serving multiple regions<br />
-                Check coverage areas for details
+                {company?.address ? (
+                  <>{company.address}<br />{company.city}, {company.state} {company.zipCode}</>
+                ) : (
+                  <>Serving multiple regions<br />Check coverage areas for details</>
+                )}
               </p>
             </div>
           </div>
@@ -280,10 +320,10 @@ export default function Contact() {
               Use the zip code field in our contact form to verify coverage, or call us directly.
             </p>
             <a
-              href="tel:(555)123-4567"
+              href={`tel:${companyPhone(company)}`}
               className="inline-block bg-blue-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-blue-700 transition"
             >
-              Call Now: (555) 123-4567
+              Call Now: {companyPhone(company) || '(555) 123-4567'}
             </a>
           </div>
         </div>
