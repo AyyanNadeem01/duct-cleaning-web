@@ -6,7 +6,7 @@ import { Menu, X } from 'lucide-react';
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
-
+  //Nav links
   const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/about', label: 'About Us' },
