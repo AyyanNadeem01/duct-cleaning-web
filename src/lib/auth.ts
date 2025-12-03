@@ -1,8 +1,8 @@
-import jwt, { SignOptions, StringValue } from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret';
-const JWT_EXPIRES_IN = (process.env.JWT_EXPIRES_IN || '7d') as StringValue;
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
 
 export function signToken(payload: object) {
   const options: SignOptions = { expiresIn: JWT_EXPIRES_IN };
