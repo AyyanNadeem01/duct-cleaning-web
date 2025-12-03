@@ -19,27 +19,27 @@ export default function ContactPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    const fetchSubmissions = async () => {
-      try {
-        const res = await fetch('/api/contact-submissions', {
-          headers: token ? { Authorization: `Bearer ${token}` } : {},
-        });
-        if (!res.ok) {
-          // Fallback if endpoint doesn't exist yet
-          setSubmissions([]);
-          return;
-        }
-        const data = await res.json();
-        setSubmissions(data.data || []);
-      } catch (err) {
-        console.error('Failed to load submissions:', err);
+  const fetchSubmissions = async () => {
+    try {
+      const res = await fetch('/api/contact-submissions', {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      if (!res.ok) {
+        // Fallback if endpoint doesn't exist yet
         setSubmissions([]);
-      } finally {
-        setLoading(false);
+        return;
       }
-    };
+      const data = await res.json();
+      setSubmissions(data.data || []);
+    } catch (err) {
+      console.error('Failed to load submissions:', err);
+      setSubmissions([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchSubmissions();
   }, [token]);
 
