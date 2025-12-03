@@ -58,7 +58,7 @@ export default function AdminRegisterPage() {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Register Admin User</h1>
+      <h1 className="text-2xl font-bold mb-4 text-blue-600">Register Admin User</h1>
 
       {success && (
         <div className="mb-4 p-3 bg-green-100 text-green-800 rounded">User registered successfully</div>

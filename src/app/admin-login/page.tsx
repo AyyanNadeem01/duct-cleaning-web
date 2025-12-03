@@ -77,6 +77,8 @@ export default function AdminLoginPage() {
         <p className="mt-6 text-xs text-gray-500 text-center">
           Contact support if you don&apos;t have credentials
         </p>
+        <p className="mt-4 text-center text-green-600">Register Page is Protected and can only be found on the admin dashboard.</p>
+        <p className="mt-2 text-center text-red-600">For testing : Username: admin | Password: 1234</p>
       </div>
     </div>
   );
