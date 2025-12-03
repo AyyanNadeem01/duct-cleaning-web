@@ -16,6 +16,8 @@ export default function Header() {
     { href: '/promotions', label: 'Promotions' },
     { href: '/careers', label: 'Careers' },
     { href: '/contact', label: 'Contact Us' },
+    { href: '/admin', label: 'Admin Panel' },
+    
   ];
 
 

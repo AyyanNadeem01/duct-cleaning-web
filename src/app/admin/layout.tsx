@@ -35,6 +35,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { label: 'Careers', href: '/admin/careers', icon: '💼' },
     { label: 'About', href: '/admin/about', icon: 'ℹ️' },
     { label: 'Contact Submissions', href: '/admin/contact', icon: '📧' },
+    { label: 'Register User', href: '/admin/register', icon: '🔐' },
   ];
 
   const isActive = (href: string) => pathname === href;
