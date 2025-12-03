@@ -1,4 +1,4 @@
-import jwt, { SignOptions, StringValue } from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret';
