@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { Briefcase, MapPin, DollarSign, Heart } from 'lucide-react';
-
+import { useCompanyData } from '@/lib/use-company';
+import {redirect} from 'next/navigation';
 interface Career {
   _id: string;
   title: string;
@@ -18,6 +19,7 @@ export default function Careers() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const { company } = useCompanyData();
   useEffect(() => {
     const fetchCareers = async () => {
       try {
@@ -172,7 +174,7 @@ export default function Careers() {
                           )}
                         </div>
                       </div>
-                      <button className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition whitespace-nowrap">
+                      <button onClick={()=>redirect("/contact")} className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition whitespace-nowrap">
                         Apply Now
                       </button>
                     </div>
@@ -183,12 +185,7 @@ export default function Careers() {
                       <div>
                         <h4 className="font-bold text-gray-800 mb-3">Key Requirements:</h4>
                         <ul className="space-y-2">
-                          {job.requirements.map((req, i) => (
-                            <li key={i} className="flex items-start gap-2 text-gray-700">
-                              <span className="text-blue-600 font-bold shrink-0">✓</span>
-                              <span>{req}</span>
-                            </li>
-                          ))}
+                          {job.requirements}
                         </ul>
                       </div>
                     )}
@@ -240,7 +237,7 @@ export default function Careers() {
 
           <div className="bg-blue-50 rounded-lg p-8 border-l-4 border-blue-600 text-center">
             <p className="text-gray-700 text-lg">
-              <strong>Questions about a position?</strong> Contact our HR team at <strong>careers@productclean.com</strong> or call <strong>(555) 123-4567</strong>
+              <strong>Questions about a position?</strong> Contact our HR team at <strong>{company?.email}</strong> or call <strong>{company?.phone}</strong>
             </p>
           </div>
         </div>
